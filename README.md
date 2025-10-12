@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+SeerBharat.org – Learning Management System (LMS)
 
-## Getting Started
+A modern **Learning Management System** (LMS) built for **[SeerBharat.org](https://seerbharat.org)** to manage and deliver educational content securely.  
+Developed with **Next.js (TypeScript)**, **MongoDB**, **Mongoose**, and **Cloudinary**, the system allows authorized admins to upload, edit, and delete learning materials — while keeping general users limited to viewing public content.
 
-First, run the development server:
+---
 
+**-> Key Features**
+
+**Secure Admin Authentication (OAuth)**
+- Google OAuth login system.
+- Only admin emails can upload/edit/delete content.
+- Unauthorized users are redirected to the home page with authorization denied message.
+- Sends **email notifications** to the admin whenever they successfully log in.
+
+**Content Management**
+- Upload **documents (PDF, DOCX, etc.)** and **videos (YouTube URLs)**.
+- Edit or delete existing content easily.
+- Store uploaded files using **Cloudinary** for optimized performance.
+
+**User Access**
+- Students and public users can view and stream uploaded content.
+- Admin-only access for content modification.
+
+**Tech Highlights**
+- ⚡ Next.js 14 (App Router + TypeScript)
+- 🧠 MongoDB + Mongoose ODM
+- ☁️ Cloudinary file management
+- 🔒 Google OAuth authentication
+- 🎨 Tailwind CSS UI
+
+---
+
+## 🧰 Tech Stack
+
+| Category | Technology |
+|-----------|-------------|
+| **Frontend Framework** | Next.js (TypeScript) |
+| **Backend** | Node.js (API Routes in Next.js) |
+| **Database** | MongoDB with Mongoose |
+| **Authentication** | Google OAuth 2.0 |
+| **Cloud Storage** | Cloudinary |
+| **Styling** | Tailwind CSS |
+| **Language** | TypeScript |
+| **Version Control** | Git + GitHub |
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone the Repository
 ```bash
+git clone https://github.com/<your-username>/seerbharat-lms.git
+cd seerbharat-lms
+2️⃣ Install Dependencies
+npm install
+
+3️⃣ Set Up Environment Variables
+
+Create a .env.local file in the root directory and add the following keys:
+# Server
+NEXTAUTH_URL=http://localhost:3000
+MONGODB_URI=<your-mongodb-connection-string>
+NEXTAUTH_SECRET=seerbharat_secret_key
+
+# Google OAuth
+GOOGLE_CLIENT_ID=<your-google-client-id>
+GOOGLE_CLIENT_SECRET=<your-google-client-secret>
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=<your-cloud-name>
+CLOUDINARY_API_KEY=<your-api-key>
+CLOUDINARY_API_SECRET=<your-api-secret>
+
+# Application
+ADMIN_EMAILS=<comma-separated-admin-emails>
+
+# Brevo
+BREVO_API_KEY=<your-api-key>
+BREVO_SENDER_EMAIL=<your-sender-email>
+
+4️⃣ Run the Development Server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open your browser at http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🧑‍💻 Admin Authentication Logic
 
-## Learn More
+The app uses Google OAuth for login.
 
-To learn more about Next.js, take a look at the following resources:
+Upon login, user email is verified against the ADMIN_EMAILS list in .env.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Non-admin users are: Redirected to / (home page).
