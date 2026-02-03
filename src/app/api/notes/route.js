@@ -4,6 +4,8 @@ import { authOptions } from '../auth/[...nextauth]/route';
 import connectDB from '@/lib/db';
 import Note from '@/models/Note';
 import { uploadToCloudinary } from '@/lib/cloudinary';
+import mongoose from 'mongoose'
+
 
 // GET all notes
 export async function GET() {

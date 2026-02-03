@@ -37,6 +37,14 @@ export default function ManagePage() {
   const [editDescription, setEditDescription] = useState('');
   const [editUrl, setEditUrl] = useState('');
 
+    // State for delete confirmation popup
+  const [showDeleteNoteConfirm, setShowDeleteNoteConfirm] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+
+   // State for delete confirmation popup
+  const [showDeleteVideoConfirm, setShowDeleteVideoConfirm] = useState(false);
+  const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -141,9 +149,7 @@ export default function ManagePage() {
     }
   };
 
-  // State for delete confirmation popup
-  const [showDeleteNoteConfirm, setShowDeleteNoteConfirm] = useState(false);
-  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+
 
   // Handle note delete confirmation
   const confirmDeleteNote = (noteId: string) => {
@@ -236,9 +242,7 @@ export default function ManagePage() {
     }
   };
 
-  // State for delete confirmation popup
-  const [showDeleteVideoConfirm, setShowDeleteVideoConfirm] = useState(false);
-  const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
+ 
 
   // Handle video delete confirmation
   const confirmDeleteVideo = (videoId: string) => {
