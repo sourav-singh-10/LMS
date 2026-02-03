@@ -3,6 +3,11 @@
 import { useSession, signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the ChatbotWrapper component
+const ChatbotWrapper = dynamic(() => import('@/components/ChatbotWrapper'), { ssr: false });
+
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -92,7 +97,34 @@ export default function Home() {
             Admin Login
           </button>
         )}
+      
       </div>
     </div>
-  );
-}
+)};
+      
+      
+      {/* Chatbot component
+      <ChatbotWrapper />
+      
+      {/* Integration Instructions */}
+      {/* <div className="mt-16 max-w-3xl mx-auto p-6 bg-gray-50 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-center">Integration with seerbharat.org</h2>
+        <div className="space-y-4">
+          <p className="text-gray-700">
+            To integrate this LMS and chatbot with seerbharat.org, add the following script to your website:
+          </p>
+          <div className="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
+            <code>{`<script src="https://lms.seerbharat.org/integration.js"></script>`}</code>
+          </div>
+          
+          <p className="text-gray-700 mt-4">
+            Then, add these elements where you want the components to appear:
+          </p>
+          <div className="bg-gray-800 text-white p-4 rounded-md overflow-x-auto">
+            <code>{`<!-- For LMS Button -->\n<div id="seerbharat-lms-button"></div>\n\n<!-- For Chatbot -->\n<div id="seerbharat-chatbot"></div>`}</code>
+          </div>
+        </div>
+      </div>
+    </div> */}
+  {/* );
+} */}

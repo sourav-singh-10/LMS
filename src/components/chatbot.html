@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sophisticated Seer Bharat Chatbot</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons for a clean look -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/dist/phosphor.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f3f4f6;
+        }
+
+        /* Custom scrollbar styles */
+        .chatbot-messages-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chatbot-messages-container::-webkit-scrollbar-track {
+            background: #e5e7eb;
+            border-radius: 10px;
+        }
+        .chatbot-messages-container::-webkit-scrollbar-thumb {
+            background-color: #d1d5db;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+        }
+
+        /* Animation for fade-in effect */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Subtle button hover effect */
+        .button-hover-effect {
+            transition: all 0.2s ease-in-out;
+        }
+        .button-hover-effect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main content of the website -->
+    <main class="w-full max-w-4xl p-8 bg-white shadow-xl rounded-2xl text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Seer Bharat</h1>
+        <p class="text-lg text-gray-600">This is a sample webpage content. The chatbot will appear as a pop-up in the corner.</p>
+    </main>
+
+    <!-- Chatbot Pop-up Container -->
+    <div id="chatbot-container" class="fixed bottom-6 right-6 z-50">
+        <!-- Chatbot Button -->
+        <button id="chatbot-toggle" class="relative w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4 rounded-full shadow-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-green-300 flex items-center justify-center">
+            <!-- Seer Bharat Logo as an SVG for better scalability and color control -->
+            <svg class="h-10 w-10 text-white" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
+            </svg>
+        </button>
+
+        <!-- Chatbot Window -->
+        <div id="chatbot-window" class="hidden absolute bottom-20 right-0 w-96 h-[28rem] bg-gray-50 rounded-2xl shadow-xl flex flex-col overflow-hidden transition-transform duration-300 ease-in-out transform scale-0 origin-bottom-right">
+            <!-- Chatbot Header -->
+            <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4 flex justify-between items-center rounded-t-2xl">
+                <div class="flex items-center space-x-2">
+                    <i class="ph ph-robot text-2xl"></i>
+                    <span class="font-bold text-lg">Seer Bharat Bot</span>
+                </div>
+                <button id="chatbot-close" class="p-1 rounded-full hover:bg-black/10 transition-colors focus:outline-none">
+                    <i class="ph ph-x text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Message Area -->
+            <div id="chatbot-messages" class="chatbot-messages-container flex-1 p-4 overflow-y-auto space-y-4">
+                <!-- Messages will be injected here by JavaScript -->
+            </div>
+
+            <!-- Options Area -->
+            <div id="chatbot-options" class="p-4 bg-white border-t border-gray-200">
+                <!-- Menu options will be injected here -->
+            </div>
+
+            <!-- Message Box (hidden by default) -->
+            <div id="chatbot-input" class="p-4 bg-white border-t border-gray-200 hidden">
+                <div class="flex space-x-2">
+                    <input type="text" id="user-input" class="flex-1 p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Type your message...">
+                    <button id="send-button" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-2 rounded-lg hover:from-green-600 hover:to-emerald-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <i class="ph ph-paper-plane-tilt text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Message box to display temporary messages -->
+            <div id="message-box" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        // DOM element variables
+        const chatbotToggle = document.getElementById('chatbot-toggle');
+        const chatbotWindow = document.getElementById('chatbot-window');
+        const chatbotClose = document.getElementById('chatbot-close');
+        const chatbotMessages = document.getElementById('chatbot-messages');
+        const chatbotOptions = document.getElementById('chatbot-options');
+        const chatbotInput = document.getElementById('chatbot-input');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const messageBox = document.getElementById('message-box');
+
+        // State to manage chat
+        let currentSection = 'mainMenu';
+
+        // URL placeholders for redirection
+        const websiteUrls = {
+            'about': 'https://www.seerbharat.org/about',
+            'programs': 'https://www.seerbharat.org/programs',
+            'contact': 'https://www.seerbharat.org/contact',
+            'get-involved': 'https://www.seerbharat.org/get-involved',
+            'news': 'https://www.seerbharat.org/news'
+        };
+
+        // Utility function to display a temporary message
+        function showMessage(text) {
+            messageBox.textContent = text;
+            messageBox.classList.remove('hidden');
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 3000); // Hide after 3 seconds
+        }
+        
+        // Utility function to close the chatbot window
+        function closeChatbot() {
+            chatbotWindow.classList.add('scale-0');
+            chatbotWindow.classList.remove('scale-100');
+            setTimeout(() => {
+                chatbotWindow.classList.add('hidden');
+            }, 300); // Wait for the scale animation to finish before hiding
+        }
+
+        // Functions to handle chat display and logic
+        function addBotMessage(text) {
+            const messageEl = document.createElement('div');
+            messageEl.className = 'flex items-start space-x-2 animate-fadeIn';
+            messageEl.innerHTML = `
+                <i class="ph ph-robot text-2xl text-gray-500 mt-1"></i>
+                <div class="bg-gray-200 p-3 rounded-2xl max-w-[85%] text-gray-800 text-sm shadow-sm">
+                    <p>${text}</p>
+                </div>
+            `;
+            chatbotMessages.appendChild(messageEl);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight; // Auto-scroll to bottom
+        }
+
+        function addUserMessage(text) {
+            const messageEl = document.createElement('div');
+            messageEl.className = 'flex items-start space-x-2 justify-end animate-fadeIn';
+            messageEl.innerHTML = `
+                <div class="bg-green-500 text-white p-3 rounded-2xl max-w-[85%] text-sm shadow-sm">
+                    <p>${text}</p>
+                </div>
+                <i class="ph ph-user-circle text-2xl text-gray-500 mt-1"></i>
+            `;
+            chatbotMessages.appendChild(messageEl);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        function createOptionButton(text, value) {
+            const button = document.createElement('button');
+            button.className = 'flex-1 text-center p-2 rounded-xl bg-gray-200 text-gray-800 button-hover-effect focus:outline-none text-xs font-semibold shadow-sm';
+            button.textContent = text;
+            button.onclick = () => handleUserChoice(value, text);
+            return button;
+        }
+
+        function displayOptions(options) {
+            chatbotOptions.innerHTML = '';
+            // New logic for 2x2 grid layout
+            const gridContainer = document.createElement('div');
+            gridContainer.className = 'grid grid-cols-2 gap-2';
+            options.forEach(option => {
+                gridContainer.appendChild(createOptionButton(option.text, option.value));
+            });
+            chatbotOptions.appendChild(gridContainer);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        // The core conversational logic
+        const chatData = {
+            'initial': {
+                botMessage: "Namaste! I'm here to help you. How can I assist you today? Please select an option below:",
+                options: [
+                    { text: "General Questions", value: "general" },
+                    { text: "Programs & Projects", value: "programs" },
+                    { text: "Volunteering", value: "volunteering" },
+                    { text: "Contact Information", value: "contact" },
+                    { text: "Talk to a human", value: "talk-to-human" }, // New option for text input
+                    { text: "Close Chat", value: "close-chat" } // New option to close the chat
+                ]
+            },
+            'general': {
+                botMessage: "What would you like to know?",
+                options: [
+                    { text: "What is Seer Bharat?", value: "general-what" },
+                    { text: "What is your vision?", value: "general-vision" },
+                    { text: "Where is your NGO based?", value: "general-location" },
+                    { text: "Back to Main Menu", value: "initial" }
+                ]
+            },
+            'programs': {
+                botMessage: "I can tell you about our work in these areas:",
+                options: [
+                    { text: "General Projects", value: "programs-general" },
+                    { text: "Education", value: "programs-education" },
+                    { text: "Healthcare", value: "programs-healthcare" },
+                    { text: "Environmental work", value: "programs-environment" },
+                    { text: "Women Empowerment", value: "programs-women" },
+                    { text: "Impact so far", value: "programs-impact" },
+                    { text: "Back to Main Menu", value: "initial" }
+                ]
+            },
+            'volunteering': {
+                botMessage: "We're happy you're interested in volunteering!",
+                options: [
+                    { text: "How can I volunteer?", value: "volunteering-how" },
+                    { text: "What types of opportunities?", value: "volunteering-types" },
+                    { text: "Back to Main Menu", value: "initial" }
+                ]
+            },
+            'contact': {
+                botMessage: "How would you like to get in touch?",
+                options: [
+                    { text: "How can I get in touch?", value: "contact-how" },
+                    { text: "What is your email address?", value: "contact-email" },
+                    { text: "What is your phone number?", value: "contact-phone" },
+                    { text: "Can I subscribe to a newsletter?", value: "contact-newsletter" },
+                    { text: "Back to Main Menu", value: "initial" }
+                ]
+            },
+            'general-what': {
+                botMessage: "Seer Bharat is an NGO dedicated to creating sustainable change across India. Our mission is to empower communities through various programs.",
+                options: [{ text: "Back to General Questions", value: "general" }]
+            },
+            'general-vision': {
+                botMessage: "Our vision is to build a future where every Indian has access to quality education, healthcare, and economic opportunities while preserving our culture and environment.",
+                options: [{ text: "Back to General Questions", value: "general" }]
+            },
+            'general-location': {
+                botMessage: "Our office is located in Nagpur, Maharashtra. For our complete address and contact details, please visit our 'Contact Us' page.",
+                redirect: 'contact'
+            },
+            'programs-general': {
+                botMessage: "That's great! We can take you to our Programs page which showcases all our ongoing initiatives and projects.",
+                redirect: 'programs'
+            },
+            'programs-education': {
+                botMessage: "Our 'Education for All' program provides quality education to underprivileged children. To learn more, we can redirect you to the Programs page.",
+                redirect: 'programs'
+            },
+            'programs-healthcare': {
+                botMessage: "Our 'Healthcare Outreach' program brings essential healthcare services to remote communities. You can find more details on our Programs page.",
+                redirect: 'programs'
+            },
+            'programs-environment': {
+                botMessage: "We focus on 'Environmental Conservation' through tree planting drives and waste management education. You can see more on our Programs page.",
+                redirect: 'programs'
+            },
+            'programs-women': {
+                botMessage: "Yes, our 'Women Empowerment' program provides skill development and entrepreneurship support. We can show you this and other programs on our Programs page.",
+                redirect: 'programs'
+            },
+            'programs-impact': {
+                botMessage: "We are proud to have impacted over 10,000 lives. You can explore our impact stories and project updates on our website.",
+                redirect: 'programs'
+            },
+            'volunteering-how': {
+                botMessage: "Thank you for your interest! We welcome passionate individuals to join us. We can take you to the 'Get Involved' page where you can find out more.",
+                redirect: 'get-involved'
+            },
+            'volunteering-types': {
+                botMessage: "We have opportunities in various areas, such as education, healthcare, and environmental projects. For a full list and to apply, we can direct you to our 'Get Involved' page.",
+                redirect: 'get-involved'
+            },
+            'contact-how': {
+                botMessage: "You can contact us via phone, email, or by visiting our office. We can take you to our 'Contact Us' page for all the details.",
+                redirect: 'contact'
+            },
+            'contact-email': {
+                botMessage: "Our official email is seerbharat@gmail.com. You can also find this and other contact methods on our 'Contact Us' page.",
+                redirect: 'contact'
+            },
+            'contact-phone': {
+                botMessage: "You can reach us at +91 95116 81037. We're happy to answer any questions you have.",
+                redirect: 'contact'
+            },
+            'contact-newsletter': {
+                botMessage: "Yes, you can stay updated by subscribing to our newsletter. We can take you to the 'News' section to sign up.",
+                redirect: 'news'
+            },
+            'talk-to-human': {
+                botMessage: "Please type your query below, and we will get back to you as soon as possible. After you send your message, we'll redirect you to our 'Contact Us' page for more options.",
+                input: true
+            },
+            'close-chat': {
+                botMessage: "Goodbye! Feel free to open the chat again if you need anything else.",
+                close: true
+            },
+            'mainMenu': {
+                botMessage: "How can I assist you today? Please select an option below:",
+                options: [
+                    { text: "General Questions", value: "general" },
+                    { text: "Programs & Projects", value: "programs" },
+                    { text: "Volunteering", value: "volunteering" },
+                    { text: "Contact Information", value: "contact" },
+                    { text: "Talk to a human", value: "talk-to-human" },
+                    { text: "Close Chat", value: "close-chat" } 
+                ]
+            }
+        };
+
+        function startChat() {
+            chatbotMessages.innerHTML = '';
+            currentSection = 'initial';
+            chatbotInput.classList.add('hidden');
+            chatbotOptions.classList.remove('hidden');
+            addBotMessage("Namaste! I'm your digital assistant for Seer Bharat. I'm here to help with any queries or difficulties you may have.");
+            setTimeout(() => {
+                 addBotMessage("How can I assist you today? Please select an option below:");
+                 displayOptions(chatData[currentSection].options);
+            }, 1500);
+        }
+
+        // Handle user choice and advance the conversation
+        function handleUserChoice(choiceValue, choiceText) {
+            addUserMessage(choiceText);
+            const nextStep = chatData[choiceValue];
+
+            // If a close action is defined, handle it
+            if (nextStep.close) {
+                addBotMessage(nextStep.botMessage);
+                setTimeout(closeChatbot, 1500); // Wait a moment to show the message before closing
+            }
+            // If a redirect is defined, handle it
+            else if (nextStep.redirect) {
+                addBotMessage(nextStep.botMessage);
+                setTimeout(() => {
+                    showMessage("Redirecting you to the relevant page...");
+                    window.open(websiteUrls[nextStep.redirect], '_blank'); // Open link in a new tab
+                    closeChatbot(); // Close the chat after redirecting
+                }, 1000);
+            }
+            // If a text input is required, show it and hide options
+            else if (nextStep.input) {
+                addBotMessage(nextStep.botMessage);
+                chatbotOptions.classList.add('hidden');
+                chatbotInput.classList.remove('hidden');
+                currentSection = choiceValue;
+            } else {
+                // Otherwise, display the bot's response and new options
+                addBotMessage(nextStep.botMessage);
+                displayOptions(nextStep.options);
+                currentSection = choiceValue;
+            }
+        }
+
+        // Handle user text input and subsequent actions
+        sendButton.addEventListener('click', () => {
+            const userMessage = userInput.value.trim();
+            if (userMessage) {
+                addUserMessage(userMessage);
+                userInput.value = '';
+                addBotMessage("Thank you for your query. We have received your message and will get back to you shortly. You can also reach out to us directly on the contact page.");
+                setTimeout(() => {
+                    window.open(websiteUrls.contact, '_blank');
+                    closeChatbot();
+                }, 2000);
+            }
+        });
+
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+
+
+        // Event listeners for opening and closing the chatbot
+        chatbotToggle.addEventListener('click', () => {
+            chatbotWindow.classList.toggle('hidden');
+            chatbotWindow.classList.toggle('scale-0');
+            chatbotWindow.classList.toggle('scale-100');
+            if (chatbotWindow.classList.contains('scale-100')) {
+                startChat(); // Start the chat when the window opens
+            }
+        });
+
+        chatbotClose.addEventListener('click', () => {
+            chatbotWindow.classList.add('scale-0');
+            chatbotWindow.classList.remove('scale-100');
+            setTimeout(() => {
+                chatbotWindow.classList.add('hidden');
+            }, 300); // Wait for the scale animation to finish before hiding
+        });
+
+        // Initialize the page by calling startChat() once the window has loaded
+        window.onload = startChat;
+
+    </script>
+</body>
+</html>
