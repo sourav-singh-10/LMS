@@ -1,6 +1,13 @@
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
+export const runtime = "nodejs"
+
+const ADMIN_EMAILS =
+  process.env.ADMIN_EMAILS
+    ?.split(",")
+    .map(e => e.trim().toLowerCase()) ?? []
+
 // ✅ MUST export this
 export const authOptions = {
   providers: [
